@@ -1,0 +1,9 @@
+{
+  "name": "notes",
+  "private": true,
+  "description": "Sistema de estudio: exámenes y notas. Corre sobre python3; el dictado suma mlx-whisper vía uv.",
+  "scripts": {
+    "notes": "uv run --with mlx-whisper app/server.py app/notas.html",
+    "exam": "python3 app/server.py app/examen.html"
+  }
+}

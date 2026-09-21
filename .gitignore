@@ -1,0 +1,8 @@
+temas/*
+!temas/ejemplo/
+.DS_Store
+__pycache__/
+node_modules/
+.claude/settings.local.json
+referencias/
+plan.md
