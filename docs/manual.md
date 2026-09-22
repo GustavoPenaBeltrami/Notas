@@ -37,6 +37,7 @@ app/
     examen.html      Simulador de examen. Rinde los 4 tipos de pregunta.
     notas.html       Cuaderno de notas.
     viz.js           Diagramas (Mermaid) y fórmulas (KaTeX). Compartido.
+    vendor/          Mermaid 11.17.2 y KaTeX 0.16.11 con sus fuentes, para andar offline.
     Design.md        El sistema visual: tokens, componentes, do's y don'ts.
 temas/<tema>/
     tema.json          Título, subtítulo, tipo, área, objetivos, motivo, idioma, rutina, enlaces.
@@ -95,8 +96,8 @@ Eso significa que el archivo también renderiza en GitHub y en Obsidian, y que s
 puede escribir el fence a mano en el `.md` sin abrir la app. `examen.html`
 renderiza los mismos fences dentro del enunciado, las opciones y la explicación.
 
-Mermaid y KaTeX se bajan de CDN la primera vez, así que sin internet los bloques
-muestran su fuente en vez del dibujo. Matemática en medio de un renglón no está
+Mermaid y KaTeX vienen en `app/vendor/`, así que diagramas y fórmulas andan sin
+internet. Matemática en medio de un renglón no está
 soportada: sólo bloques.
 
 ## Cómo se usa

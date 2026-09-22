@@ -2,7 +2,7 @@
 
 <!-- omit in toc -->
 
-# Notas 📚
+# TomaNota 📚
 
 <strong>Hub para autodidactas agentizado</strong>
 
@@ -20,10 +20,10 @@
 
 Un libro, una certificación, la documentación de una herramienta, un curso: cada cosa que estudiás es un **tema**, y Notas le arma alrededor el loop completo — preparación, práctica, feedback, repaso espaciado. Todo arranca con una línea en tu agente:
 
-```
-/notas-init      dar de alta un tema: entrevista, estructura, diagnóstico de nivel
-/notas-sesion    qué hay pendiente hoy en todos los temas, y qué hacer
-```
+| Comando | Qué hace |
+|---|---|
+| `/notas-init` | Da de alta un tema: entrevista, estructura, diagnóstico de nivel |
+| `/notas-sesion` | Qué hay pendiente hoy en todos los temas, y qué hacer |
 
 ## Por qué Notas
 
@@ -69,7 +69,7 @@ Notas se usa con tres ventanas lado a lado:
 | | Ventana | Para qué |
 |---|---|---|
 | 1 | **El material** | El PDF, el curso, la documentación. Lo que estás estudiando. |
-| 2 | **La app** (`npm run app`) | El cuaderno en `localhost:8321`. Los exámenes, desde la barra de navegación. |
+| 2 | **La app** | El cuaderno en `localhost:8321`. Los exámenes, desde la barra de navegación. |
 | 3 | **El agente** | Abierto en la raíz del repo. Enseña, arma exámenes, corrige. |
 
 Después el loop: `/notas-ensenar` o `/notas-resumir` para preparar, `/notas-examen` y `/notas-ejercicios` para practicar (rendís en la ventana 2), `/notas-correjir` para el feedback y `/notas-repasar` para que no se evapore. Todo lo que producen queda en `temas/<tema>/` y aparece solo en la app.
@@ -78,14 +78,30 @@ Después el loop: `/notas-ensenar` o `/notas-resumir` para preparar, `/notas-exa
 
 ## Instalación
 
-Corre en macOS, Linux y Windows. Necesitás:
+### Requisitos
 
-- **Python 3.9+**
-- **[uv](https://docs.astral.sh/uv/)** — trae el motor de dictado la primera vez: mlx-whisper en Mac Apple Silicon, faster-whisper en el resto
-- **Un agente de código**, el que uses
-- npm es opcional: `npm run app` es sólo un atajo, no hay `npm install`
+- **[uv](https://docs.astral.sh/uv/)** — lo único que hay que instalar. Baja Python 3.9+ si no lo tenés y el motor de dictado la primera vez.
+  ```sh
+  curl -LsSf https://astral.sh/uv/install.sh | sh                                # macOS y Linux
+  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"   # Windows
+  ```
+- **git**, para clonar el repo.
+- **Un agente de código**, el que uses.
+- **Un navegador** con micrófono para el dictado y los exámenes orales.
+- **Internet sólo la primera vez**, para bajar los paquetes y el modelo de voz. Después anda offline: Mermaid y KaTeX vienen en el repo (`app/vendor/`).
+- npm es opcional: `npm run app` es sólo un atajo, no hay `npm install`.
 
-Sin uv, `python3 app/server.py app/notas.html` levanta todo menos el dictado. En Windows ARM, el dictado corre con Python x64 emulado (ver el [manual](docs/manual.md#arrancar)).
+### Plataformas
+
+| Sistema | Dictado | Disco (paquetes + modelo) | Cómo se levanta |
+|---|---|---|---|
+| macOS Apple Silicon | mlx-whisper, en la GPU | ~2,7 GB | `npm run app` |
+| macOS Intel, Linux x64, Windows x64 | faster-whisper, en la CPU | ~0,7 GB | `npm run app` |
+| Windows ARM | faster-whisper, con Python x64 emulado | ~0,7 GB | `uv run --python cpython-3.12-windows-x86_64-none --with faster-whisper app/server.py app/notas.html` |
+
+Sin npm: `uv run app/server.py app/notas.html`. Sin uv: `python3 app/server.py app/notas.html` levanta todo menos el dictado. En CPU el dictado usa el modelo `small`; con una máquina potente, `NOTAS_MODELO_VOZ=turbo` lo hace más preciso.
+
+### Pasos
 
 ```sh
 git clone https://github.com/GustavoPenaBeltrami/Notas.git
