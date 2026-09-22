@@ -110,7 +110,7 @@ Si una pregunta sólo se puede hacer de una forma, dejala — pero que sean poca
 1. Validá: `python3 -m json.tool temas/repaso/examenes/<fecha>/examen.json > /dev/null`.
 2. Chequeá que `correcta` esté entre 0 y 3, que todas tengan 4 opciones, y que el
    índice correcto esté repartido.
-3. Decile la ruta y que lo abra con `npm run exam`.
+3. Decile la ruta y que lo abra con `npm run app`.
 4. Contale en dos líneas **por qué entró cada tarjeta**: "seis de DDIA cap 3, en
    caja rápida por un fallo la semana pasada; cuatro de FoSA cap 2, recién
    entrando; dos de AWS para intercalar". El repaso enseña más cuando se entiende

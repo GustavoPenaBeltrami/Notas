@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Servidor local del sistema de estudio. Solo stdlib: python3 app/server.py
 
-El dictado es lo unico que necesita algo mas (mlx-whisper). `npm run notes`
+El dictado es lo unico que necesita algo mas (mlx-whisper). `npm run app`
 lo trae con uv; sin eso todo anda igual menos el microfono.
 """
 import base64, datetime, hashlib, http.server, json, pathlib, re, sys, threading, urllib.parse, webbrowser
@@ -32,7 +32,7 @@ def transcribir(crudo):
     try:
         import numpy, mlx_whisper   # aca adentro: el resto del server no lo necesita
     except ImportError:
-        raise ValueError("falta mlx-whisper, arranca con npm run notes")
+        raise ValueError("falta mlx-whisper, arranca con npm run app")
     audio = numpy.frombuffer(crudo, dtype="<f4")
     with candado_voz:   # ponytail: una transcripcion a la vez, hay un solo usuario
         r = mlx_whisper.transcribe(audio, path_or_hf_repo=MODELO_VOZ, language="es")

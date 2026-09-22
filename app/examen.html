@@ -85,7 +85,7 @@ async function indice() {
     temas = await cargar();
   } catch {
     app.innerHTML = `<div class="hoja"><p class="prompt"><span class="p-sig">✕</span> falta el servidor</p>
-      <p>Abrí una terminal acá y corré <code>npm run exam</code>.</p></div>`;
+      <p>Abrí una terminal acá y corré <code>npm run app</code>.</p></div>`;
     return;
   }
   ruta('~/notes/temas/*/examenes');

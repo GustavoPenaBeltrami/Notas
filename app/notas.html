@@ -198,7 +198,7 @@ async function menu() {
     temas = await cargarTemas();
   } catch {
     app.innerHTML = `<div class="hoja"><p class="prompt"><span class="p-sig">✕</span> falta el servidor</p>
-      <p>Abrí una terminal en la carpeta y corré <code>npm run notes</code>.</p></div>`;
+      <p>Abrí una terminal en la carpeta y corré <code>npm run app</code>.</p></div>`;
     return;
   }
   armarArbol(temas, null);

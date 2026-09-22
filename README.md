@@ -5,14 +5,12 @@ Sistema de estudio para el roadmap de arquitectura de software.
 ## Arrancar
 
 ```sh
-npm run notes    # abre los cuadernos
-npm run exam     # abre los examenes
+npm run app      # abre los cuadernos; los examenes desde la nav
 ```
 
-Todo levanta el mismo servidor en `http://localhost:8321/`, solo cambia la
-pagina que abre. Si ya hay uno corriendo, el segundo comando abre la pestana
-y sale. Sin `npm install` y sin build: corre sobre la stdlib de Python.
-La única excepción es el dictado: `npm run notes` arranca con `uv run --with
+Levanta el servidor en `http://localhost:8321/` y abre `notas.html`. Si ya hay
+uno corriendo, abre la pestana y sale. Sin `npm install` y sin build: corre sobre la stdlib de Python.
+La única excepción es el dictado: `npm run app` arranca con `uv run --with
 mlx-whisper`, que baja la dependencia sola la primera vez.
 
 ## Archivos

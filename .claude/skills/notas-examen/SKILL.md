@@ -158,7 +158,7 @@ más de estar equivocado.
 2. Para cada pregunta `opcion_multiple`: verificá que `correcta` esté entre 0 y 3 y que
    tenga 4 opciones, y que `correcta` no quede concentrada en un índice. Para cada
    `desarrollo`/`oral`/`practico`: verificá que tenga `rubrica` con 3-5 puntos.
-3. Decile al usuario la ruta y que lo abra con `npm run exam`.
+3. Decile al usuario la ruta y que lo abra con `npm run app`.
 4. Si el examen tiene preguntas no-MC, avisale que al rendirlo va a necesitar
    correr `notas-correjir` sobre el intento — `examen.html` no puede corregir
    `desarrollo`/`oral`/`practico` solo.
