@@ -15,7 +15,7 @@ las dependencias del encabezado de `app/server.py` y baja la que corresponde la
 primera vez — `mlx-whisper` (GPU) en Mac Apple Silicon, `faster-whisper` (CPU)
 en Linux, Windows y Mac Intel. En CPU usa el modelo `small`; para otro,
 `NOTAS_MODELO_VOZ=turbo npm run app`. En Windows ARM el dictado necesita Python
-x64 (emulado): `uv run --python cpython-3.12-windows-x86_64-none app/server.py app/notas.html`.
+x64 (emulado): `uv run --python cpython-3.12-windows-x86_64-none --with faster-whisper app/server.py app/notas.html`.
 Sin `uv`, `python3 app/server.py app/notas.html` levanta todo menos el dictado.
 
 ## Archivos

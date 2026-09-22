@@ -17,7 +17,7 @@ jobs:
           - os: macos-14
           - os: windows-latest
           - os: windows-11-arm
-            python: --python cpython-3.12-windows-x86_64-none
+            python: --python cpython-3.12-windows-x86_64-none --with faster-whisper
     runs-on: ${{ matrix.os }}
     env:
       NOTAS_MODELO_VOZ: tiny
