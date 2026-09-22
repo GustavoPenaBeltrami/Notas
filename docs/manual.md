@@ -10,8 +10,13 @@ npm run app      # abre los cuadernos; los examenes desde la nav
 
 Levanta el servidor en `http://localhost:8321/` y abre `notas.html`. Si ya hay
 uno corriendo, abre la pestana y sale. Sin `npm install` y sin build: corre sobre la stdlib de Python.
-La única excepción es el dictado: `npm run app` arranca con `uv run --with
-mlx-whisper`, que baja la dependencia sola la primera vez.
+La única excepción es el dictado: `npm run app` arranca con `uv run`, que lee
+las dependencias del encabezado de `app/server.py` y baja la que corresponde la
+primera vez — `mlx-whisper` (GPU) en Mac Apple Silicon, `faster-whisper` (CPU)
+en Linux, Windows y Mac Intel. En CPU usa el modelo `small`; para otro,
+`NOTAS_MODELO_VOZ=turbo npm run app`. En Windows ARM el dictado necesita Python
+x64 (emulado): `uv run --python cpython-3.12-windows-x86_64-none app/server.py app/notas.html`.
+Sin `uv`, `python3 app/server.py app/notas.html` levanta todo menos el dictado.
 
 ## Archivos
 

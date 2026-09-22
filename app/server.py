@@ -1,10 +1,18 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.9"
+# dependencies = [
+#   "mlx-whisper; sys_platform == 'darwin' and platform_machine == 'arm64'",
+#   "faster-whisper; (sys_platform != 'darwin' or platform_machine != 'arm64') and (sys_platform != 'win32' or platform_machine != 'ARM64')",
+# ]
+# ///
 """Servidor local del sistema de estudio. Solo stdlib: python3 app/server.py
 
-El dictado es lo unico que necesita algo mas (mlx-whisper). `npm run app`
-lo trae con uv; sin eso todo anda igual menos el microfono.
+El dictado es lo unico que necesita algo mas: mlx-whisper en Mac Apple Silicon,
+faster-whisper en el resto. `npm run app` (uv run) trae el que corresponde;
+sin eso todo anda igual menos el microfono.
 """
-import base64, datetime, hashlib, http.server, json, pathlib, re, sys, threading, urllib.parse, webbrowser
+import base64, datetime, hashlib, http.server, json, os, pathlib, re, sys, threading, urllib.parse, webbrowser
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import texto
@@ -13,7 +21,9 @@ RAIZ = pathlib.Path(__file__).resolve().parent.parent
 TEMAS = RAIZ / "temas"
 PUERTO = 8321
 MODELO_VOZ = "mlx-community/whisper-large-v3-turbo"   # ~1,6 GB, se baja la primera vez
+CPU_VOICE_MODEL = os.environ.get("NOTAS_MODELO_VOZ", "small")   # ponytail: CPU int8 only, set NOTAS_MODELO_VOZ=turbo on a fast box; CUDA needs device="auto" + cuDNN
 candado_voz = threading.Lock()
+cpu_model = None
 LIMITE_CUERPO = 20 * 1024 * 1024   # ponytail: cap parejo para todo POST, un solo usuario local
 EXT_AUDIO = {"audio/webm": "webm", "audio/ogg": "ogg", "audio/mp4": "mp4",
              "audio/wav": "wav", "audio/x-wav": "wav"}
@@ -27,18 +37,35 @@ def ext_audio(mime):
     return ext
 
 
-def transcribir(crudo):
-    """float32 mono a 16 kHz, tal cual lo manda el navegador. Whisper en la GPU."""
+def whisper(audio, idioma):
+    global cpu_model
     try:
-        import numpy, mlx_whisper   # aca adentro: el resto del server no lo necesita
+        import mlx_whisper
     except ImportError:
-        raise ValueError("falta mlx-whisper, arranca con npm run app")
-    audio = numpy.frombuffer(crudo, dtype="<f4")
+        mlx_whisper = None
+    if mlx_whisper:
+        r = mlx_whisper.transcribe(audio, path_or_hf_repo=MODELO_VOZ, language=idioma)
+        return [[s["start"], s["text"].strip()] for s in r["segments"]]
+    try:
+        import faster_whisper
+    except ImportError:
+        raise ValueError("falta el motor de dictado, arranca con npm run app")
+    if cpu_model is None:
+        cpu_model = faster_whisper.WhisperModel(CPU_VOICE_MODEL, device="cpu", compute_type="int8")
+    segments, _ = cpu_model.transcribe(audio, language=idioma)
+    return [[s.start, s.text.strip()] for s in segments]
+
+
+def transcribir(crudo):
+    """float32 mono a 16 kHz, tal cual lo manda el navegador."""
+    try:
+        import numpy   # aca adentro: el resto del server no lo necesita
+    except ImportError:
+        raise ValueError("falta el motor de dictado, arranca con npm run app")
     with candado_voz:   # ponytail: una transcripcion a la vez, hay un solo usuario
-        r = mlx_whisper.transcribe(audio, path_or_hf_repo=MODELO_VOZ, language="es")
+        segmentos = whisper(numpy.frombuffer(crudo, dtype="<f4"), "es")
     # segmentos [inicio_s, texto]: el dictado en vivo fija los viejos y recorta el audio ahi
-    return {"texto": r["text"].strip(),
-            "segmentos": [[s["start"], s["text"].strip()] for s in r["segments"]]}
+    return {"texto": " ".join(t for _, t in segmentos).strip(), "segmentos": segmentos}
 
 
 def carpeta(slug):
@@ -261,6 +288,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    if sys.argv[1:2] == ["--transcribir"]:
+        print(" ".join(t for _, t in whisper(sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else "es")).strip())
+        sys.exit(0)
     pagina = sys.argv[1] if len(sys.argv) > 1 else ""
     url = f"http://localhost:{PUERTO}/{pagina}"
     try:

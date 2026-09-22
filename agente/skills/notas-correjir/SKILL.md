@@ -30,14 +30,12 @@ relevantes.
 - `oral`: si la respuesta trae `texto` (el alumno usó el fallback escrito),
   corregila igual que `desarrollo`. Si trae `audio` (nombre de archivo en
   `intentos/`), esa es la fuente de verdad — vos no podés escuchar el archivo
-  directamente, así que transcribilo con el mismo modelo que usa el servidor
-  (`MODELO_VOZ` en `app/server.py`), en el idioma de `tema.json` →
-  `idioma.examenes`:
+  directamente, así que transcribilo con el mismo motor que usa el servidor,
+  en el idioma de `tema.json` → `idioma.examenes`:
 
   ```bash
-  python3 -c "import mlx_whisper, json; print(json.dumps(mlx_whisper.transcribe(
-      'temas/<slug>/examenes/<examen>/intentos/<archivo-de-audio>',
-      path_or_hf_repo='mlx-community/whisper-large-v3-turbo', language='<idioma>')['text']))"
+  uv run app/server.py --transcribir \
+      temas/<slug>/examenes/<examen>/intentos/<archivo-de-audio> <idioma>
   ```
 
   Corregí la transcripción contra la `rubrica` igual que una respuesta escrita.

@@ -1,0 +1,29 @@
+name: dictado
+
+on:
+  workflow_dispatch:
+  push:
+    paths: [app/server.py, .github/workflows/dictado.yml]
+  pull_request:
+    paths: [app/server.py, .github/workflows/dictado.yml]
+
+jobs:
+  transcribir:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+          - os: macos-14
+          - os: windows-latest
+          - os: windows-11-arm
+            python: --python cpython-3.12-windows-x86_64-none
+    runs-on: ${{ matrix.os }}
+    env:
+      NOTAS_MODELO_VOZ: tiny
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.2.0
+      - run: uv run python app/test_intento.py
+      - run: uv run python -c "import wave; w = wave.open('prueba.wav', 'wb'); w.setnchannels(1); w.setsampwidth(2); w.setframerate(16000); w.writeframes(bytes(32000)); w.close()"
+      - run: uv run ${{ matrix.python }} app/server.py --transcribir prueba.wav es
