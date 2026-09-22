@@ -31,7 +31,7 @@ Leé del filesystem, no de memoria:
 - **`tema.json` incompletos**: `objetivos` vacío/ausente o `motivo`
   vacío/ausente.
 - **Temas sin agente-profesor**: por cada `temas/<slug>/`, chequeá si existe
-  `.claude/agents/profesor-<slug>.md`. Los que no lo tengan, listalos — es una
+  `agente/agents/profesor-<slug>.md`. Los que no lo tengan, listalos — es una
   señal a mostrar, no un bloqueo.
 
 Mostrá el resumen en pocas líneas, agrupado por tema, sólo lo que tenga algo.
@@ -43,7 +43,7 @@ Si algún tema tiene `objetivos` o `motivo` vacíos, ofrecé completarlos ahora
 `tema.json` y, si `aprendizaje.md` tiene la Misión vacía, completala con lo
 mismo. Si no acepta, seguí: no bloquea la sesión.
 
-Para cada tema sin `.claude/agents/profesor-<slug>.md` (relevado en el paso
+Para cada tema sin `agente/agents/profesor-<slug>.md` (relevado en el paso
 1), ofrecé generarlo con el mismo criterio de `notas-init` §4 (persona
 diseñada para ese tema puntual, default sí, plantilla y chequeo de esa
 sección). Uno por vez si son varios; no bloquea la sesión si dice que no.
@@ -73,7 +73,7 @@ pendiente concreto, concepción equivocada relevante). No repreguntes lo que ya
 se preguntó acá.
 
 Si el destino es "Que me enseñen algo puntual" y el tema tiene
-`.claude/agents/profesor-<slug>.md`, invocá ese agente (`Agent`,
+`agente/agents/profesor-<slug>.md`, invocá ese agente (`Agent`,
 `subagent_type: profesor-<slug>`) en vez de correr `notas-ensenar` en la
 sesión principal — el agente sigue el mismo proceso, con más carácter de
 dominio.

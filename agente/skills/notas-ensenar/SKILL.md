@@ -125,7 +125,7 @@ resto.
 
 ## Si el tema tiene profesor dedicado
 
-Antes de sondear, fijate si existe `.claude/agents/profesor-<slug-tema>.md`
+Antes de sondear, fijate si existe `agente/agents/profesor-<slug-tema>.md`
 para el tema en cuestión. Si existe, delegale la sesión entera con `Agent`
 (`subagent_type: profesor-<slug-tema>`) pasándole el pedido tal cual — sigue
 este mismo proceso, con más carácter de dominio. Si no existe, seguí vos con

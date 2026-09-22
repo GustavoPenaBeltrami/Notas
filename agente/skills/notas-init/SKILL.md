@@ -111,7 +111,7 @@ en `aprendizaje.md` del tema; el agente no acumula memoria propia. `area`
 sigue existiendo en `tema.json` como dato de contexto/tono (§2.1 de
 `plan.md`), ya no acota el alcance del agente.
 
-1. Si ya existe `.claude/agents/profesor-<slug-tema>.md`, no hay nada que
+1. Si ya existe `agente/agents/profesor-<slug-tema>.md`, no hay nada que
    hacer.
 2. Si no existe, ofrecelo con `AskUserQuestion`, **default sí** — no lo
    asumas implícito, pero tampoco lo enfríes con "¿querés uno?" sin sesgo: es
@@ -119,7 +119,7 @@ sigue existiendo en `tema.json` como dato de contexto/tono (§2.1 de
 3. Si acepta, diseñá la persona **para este tema puntual**: mirá
    `titulo`/`subtitulo`/`tipo` recién completados y elegí quién enseñaría esto
    en la vida real. Nunca un genérico "profesor de <área>".
-4. Escribí `.claude/agents/profesor-<slug-tema>.md`, frontmatter igual a
+4. Escribí `agente/agents/profesor-<slug-tema>.md`, frontmatter igual a
    `investigador.md` (`name`/`description`/`tools`/`model`):
 
 ```md
@@ -139,7 +139,7 @@ antes de enseñar.
 
 ## Cómo enseñás
 
-Seguí `.claude/skills/notas-ensenar/SKILL.md` entero: los dos principios,
+Seguí `agente/skills/notas-ensenar/SKILL.md` entero: los dos principios,
 sondear → planificar → enseñar, reglas de preguntas corregidas, dónde queda
 la lección. No es un proceso paralelo: es el mismo con tu personalidad.
 
@@ -162,7 +162,7 @@ respuesta antes de que la intente.
    - ¿Ata la verificación de hechos a `investigador`, nunca a memoria?
    - ¿Usa `aprendizaje.md` del tema como memoria, sin duplicar estado propio?
 6. **Temas existentes sin profesor**: si en `temas/*/tema.json` hay otros
-   temas ya dados de alta sin `.claude/agents/profesor-<slug>.md`, no hace
+   temas ya dados de alta sin `agente/agents/profesor-<slug>.md`, no hace
    falta resolverlo acá — `/notas-sesion` los detecta al relevar estado y los
    ofrece con el mismo criterio, así los temas viejos lo consiguen sin volver
    a correr `notas-init` para cada uno.

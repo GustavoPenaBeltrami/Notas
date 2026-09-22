@@ -6,3 +6,4 @@ node_modules/
 .claude/settings.local.json
 referencias/
 plan.md
+agente/agents/profesor-*
