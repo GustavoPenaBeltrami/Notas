@@ -3,7 +3,7 @@
 # requires-python = ">=3.9"
 # dependencies = [
 #   "mlx-whisper; sys_platform == 'darwin' and platform_machine == 'arm64'",
-#   "faster-whisper; (sys_platform != 'darwin' or platform_machine != 'arm64') and (sys_platform != 'win32' or platform_machine != 'ARM64')",
+#   "faster-whisper; sys_platform != 'win32' or platform_machine != 'ARM64'",
 # ]
 # ///
 """Servidor local del sistema de estudio. Solo stdlib: python3 app/server.py
@@ -40,16 +40,18 @@ def ext_audio(mime):
 def whisper(audio, idioma):
     global cpu_model
     try:
+        import faster_whisper
+    except ImportError:
+        raise ValueError("falta el motor de dictado, arranca con npm run app")
+    if isinstance(audio, str):
+        audio = faster_whisper.decode_audio(audio)
+    try:
         import mlx_whisper
     except ImportError:
         mlx_whisper = None
     if mlx_whisper:
         r = mlx_whisper.transcribe(audio, path_or_hf_repo=MODELO_VOZ, language=idioma)
         return [[s["start"], s["text"].strip()] for s in r["segments"]]
-    try:
-        import faster_whisper
-    except ImportError:
-        raise ValueError("falta el motor de dictado, arranca con npm run app")
     if cpu_model is None:
         cpu_model = faster_whisper.WhisperModel(CPU_VOICE_MODEL, device="cpu", compute_type="int8")
     segments, _ = cpu_model.transcribe(audio, language=idioma)
@@ -82,7 +84,7 @@ TIPOS = ("libro", "certificación", "documentación", "curso")
 def meta(d):
     """Lo que describe al tema. `orden` manda en las listas; sin el, va al final."""
     archivo = d / "tema.json"
-    guardado = json.loads(archivo.read_text()) if archivo.exists() else {}
+    guardado = json.loads(archivo.read_text(encoding="utf-8")) if archivo.exists() else {}
     titulo = d.name if " " in d.name else d.name.replace("-", " ").capitalize()
     return {"titulo": guardado.get("titulo") or titulo,
             "subtitulo": guardado.get("subtitulo", ""),
@@ -149,7 +151,7 @@ def secciones(d):
 
 def titulos(d):
     return [re.sub(r"<[^>]+>|[*_~`\[\]]", "", l[2:]).strip()
-            for f in secciones(d) for l in f.read_text().splitlines() if l.startswith("# ")]
+            for f in secciones(d) for l in f.read_text(encoding="utf-8").splitlines() if l.startswith("# ")]
 
 
 def temas():
@@ -161,7 +163,7 @@ def temas():
 
 def leer_tema(slug):
     d = carpeta(slug)
-    partes = [texto.md_a_html(f.read_text()) for f in secciones(d)]
+    partes = [texto.md_a_html(f.read_text(encoding="utf-8")) for f in secciones(d)]
     return {"slug": slug, **meta(d), "recursos": recursos(d),
             "html": a_url("\n".join(partes), slug)}
 
@@ -172,7 +174,7 @@ def guardar_tema(slug, datos):
     notas.mkdir(exist_ok=True)
     actual = meta(d)                       # conserva `orden`, que no viaja en el editor
     actual.update({k: datos[k] for k in ("titulo", "subtitulo") if k in datos})
-    (d / "tema.json").write_text(json.dumps(actual, ensure_ascii=False, indent=2) + "\n")
+    (d / "tema.json").write_text(json.dumps(actual, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     html = extraer_imagenes(a_ruta(datos.get("html", ""), slug), notas / "img")
     usadas = set(re.findall(r'src="img/([^"]+)"', html))   # antes de partir: html se reusa abajo
@@ -180,7 +182,7 @@ def guardar_tema(slug, datos):
     escritos = set()
     for i, (titulo, trozo) in enumerate(texto.partir_por_h1(html), 1):
         nombre = f"{i:02d}-{texto.slug(titulo)}.md"
-        (notas / nombre).write_text(texto.html_a_md(trozo))
+        (notas / nombre).write_text(texto.html_a_md(trozo), encoding="utf-8")
         escritos.add(nombre)
     for viejo in notas.glob("*.md"):          # secciones borradas o renombradas
         if viejo.name not in escritos:
@@ -199,7 +201,7 @@ def guardar_tema(slug, datos):
 def indice_examenes():
     salida = [{"slug": d.name, **meta(d),
                "examenes": [{"ruta": f"temas/{d.name}/examenes/{f.parent.name}/examen.json",
-                             "titulo": json.loads(f.read_text()).get("titulo", f.parent.name)}
+                             "titulo": json.loads(f.read_text(encoding="utf-8")).get("titulo", f.parent.name)}
                             for f in sorted((d / "examenes").glob("*/examen.json"))]}
               for d in TEMAS.glob("*") if d.is_dir()]
     return {"temas": ordenar(salida)}
@@ -230,8 +232,8 @@ def guardar_intento(slug, examen, respuestas):
             (intentos / nombre).write_bytes(base64.b64decode(r.pop("audio")))
             r["audio"] = nombre
     ruta = intentos / (fecha + ".json")
-    ruta.write_text(json.dumps({"examen": examen, "respuestas": respuestas}, ensure_ascii=False, indent=2) + "\n")
-    return str(ruta.relative_to(RAIZ))
+    ruta.write_text(json.dumps({"examen": examen, "respuestas": respuestas}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return ruta.relative_to(RAIZ).as_posix()
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
