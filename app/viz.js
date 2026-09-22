@@ -7,7 +7,7 @@
     const js = document.createElement('script');
     js.src = src;
     js.onload = ok;
-    js.onerror = () => fail(new Error('no se pudo cargar ' + src));
+    js.onerror = () => fail(new Error('could not load ' + src));
     document.head.appendChild(js);
   });
 
@@ -103,7 +103,7 @@
   }
 
   new MutationObserver(() => paintAll())
-    .observe(document.documentElement, { attributeFilter: ['data-tema'] });
+    .observe(document.documentElement, { attributeFilter: ['data-theme'] });
 
   Object.assign(window, { vizPaint: paintAll, vizBlock: block, vizText: withBlocks });
 })();
